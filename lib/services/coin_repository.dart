@@ -1,0 +1,58 @@
+import 'dart:convert';
+// import '../model/data_error.dart';
+import 'package:coinbase_clone_flutter/models/coin_data.dart';
+import 'package:coinbase_clone_flutter/models/data_error.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/coin.dart';
+
+class CoinRepository {
+  static const String _baseUrl = 'https://min-api.cryptocompare.com/';
+
+  static Future<List<Coin>> getCoins() async {
+    const requestUrl =
+        '${_baseUrl}data/top/totalvolfull?limit=25&tsym=IDR&page=0';
+
+    try {
+      final response = await http.Client().get(Uri.parse(requestUrl));
+
+      /// Checking the status code of the response. If it is 200, it is decoding the response body and
+      /// returning a list of Coin objects.
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['Data'] as List<dynamic>;
+
+        /// Mapping the data to Coin objects.
+        return data.map((e) {
+          /// Mapping the data that comes from JSON to Coin objects.
+          return Coin.fromMap(e);
+        }).toList();
+      } else {
+        throw Exception('Failed to load currencies');
+      }
+    } catch (err) {
+      throw DataError(message: err.toString());
+    }
+  }
+
+  static Future<List<CoinData>> getCoinHourlyData(String ticker) async {
+    final requestUrl =
+        '${_baseUrl}data/v2/histohour?fsym=$ticker&tsym=IDR&limit=25';
+
+    try {
+      final response = await http.Client().get(Uri.parse(requestUrl));
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final data = json['Data']['Data'] as List<dynamic>;
+
+        return data.map((e) {
+          return CoinData.fromMap(e);
+        }).toList();
+      } else {
+        throw Exception('Failed to load currencies');
+      }
+    } catch (err) {
+      throw DataError(message: err.toString());
+    }
+  }
+}
