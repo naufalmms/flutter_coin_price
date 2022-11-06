@@ -1,1 +1,1 @@
-![coinPrice](https://user-images.githubusercontent.com/32739956/200161058-67085533-48b8-4898-92b7-51b22483f34e.gif)
+![coinPrice](https://user-images.githubusercontent.com/32739956/200161148-7bb0e385-8d01-43e0-9909-f7d05dabdc09.gif)
